@@ -5,23 +5,45 @@ from sentence_transformers import SentenceTransformer
 # Load embedding model once
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-def chunk_text(text, chunk_size=500):
+def chunk_text(text : str, chunk_size : int = 800 , overlap : int = 100):
+    """
+    Split text into overlapping chunks.
+    This is better than simple character splitting because it preserves context.
+    """
     chunks = []
-    for i in range(0, len(text), chunk_size):
-        chunks.append(text[i:i+chunk_size])
+    text = text.strip()
+    start = 0
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end].strip()
+        if chunk:
+            chunks.append(chunk)
+        start += chunk_size - overlap
     return chunks
 
-def create_vector_store(text):
-    chunks = chunk_text(text)
+
+def create_vector_store(text  = str, chunk_size : int = 800, overlap : int = 100):
+    chunks = chunk_text(text= text, chunk_size = chunk_size, overlap = overlap)
     embeddings = model.encode(chunks)
+    embeddings = np.array(embeddings).astype('float32')
 
     dimension = embeddings.shape[1]
     index = faiss.IndexFlatL2(dimension)
-    index.add(np.array(embeddings))
+    index.add(embeddings)
 
     return index, chunks
 
-def retrieve(query, index, chunks, k=3):
+def retrieve(query, index, chunks, k=3) -> list[dict]:
     query_embedding = model.encode([query])
     distances, indices = index.search(np.array(query_embedding), k)
-    return [chunks[i] for i in indices[0]]
+    results = []
+    for distances, idx in zip(distances[0], indices[0]):
+        results.append(
+            { 
+            "chunk_id" : int(idx),
+            "chunk_text" : chunks[idx],
+            "distance": float(distances)
+            }
+        )
+    return results
+
