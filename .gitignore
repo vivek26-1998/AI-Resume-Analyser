@@ -1,4 +1,6 @@
-.streamlit/secrets.toml
+*.egg-info/
 __pycache__/
+*.pyc
 .env
-.txt
+.streamlit/secrets.toml
+example.txt
