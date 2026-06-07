@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-rag"
+version = "0.1.0"
+description = "RAG-powered resume intelligence system with evaluation"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit",
+    "sentence-transformers",
+    "faiss-cpu",
+    "PyMuPDF",
+    "openai",
+    "numpy",
+    "torch",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["resume_rag*", "evaluation*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"

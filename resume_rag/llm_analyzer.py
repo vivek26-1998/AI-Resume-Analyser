@@ -1,14 +1,17 @@
 from openai import OpenAI
 import json
-from prompt import build_resume_analysis_prompt
+from .prompt import build_resume_analysis_prompt
+
+
 def format_retrieved_context(retrieved_chunks: list[dict]) -> str:
     context_parts = []
 
     for chunk in retrieved_chunks:
         chunk_text = f"[Chunk {chunk['chunk_id']}]\n{chunk['chunk_text']}"
         context_parts.append(chunk_text)
-    
+
     return "\n\n".join(context_parts)
+
 
 def analyze_resume_match(
     client: OpenAI,

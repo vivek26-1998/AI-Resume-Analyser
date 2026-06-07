@@ -1,0 +1,53 @@
+[
+  {
+    "case_id": "ai_ml_engineer_01",
+    "resume_file": "examples/Sample_CV.pdf",
+    "job_description": "We are looking for an AI/ML Engineer with experience building practical AI applications using LLMs, RAG pipelines, vision-language models, and agent-based workflows. The role involves working with Python, embeddings, vector databases, prompt engineering, model evaluation, APIs, and production deployment to create reliable AI systems for tasks like document understanding, search, automation, and intelligent assistants. Experience with tools such as LangChain, LlamaIndex, LangGraph, FastAPI, Docker, cloud platforms, and vector stores is a plus.",
+    "expected_matching_skills": [
+          "Python",
+          "FastAPI",
+          "REST APIs",
+          "LLMs",
+          "Vision-Language Models",
+          "RAG",
+          "Prompt Engineering",
+          "OpenAI API",
+          "Hugging Face Transformers",
+          "Docker",
+          "Kubernetes",
+          "AWS (S3, Lambda)"
+    ],
+    "expected_missing_skills": [
+      "Vector databases",
+      "MongoDB",
+      "Redis",
+      "ChromaDB",
+      "Pinecone",
+      "LangChain",
+      "LlamaIndex",
+      "Azure OpenAI",
+      "Google Vertex AI",
+      "AWS Bedrock",
+      "Terraform",
+      "MLflow",
+      "Airflow"
+
+    ],
+    "must_not_claim_as_experience": [
+      "LangChain",
+      "LlamaIndex",
+      "Azure OpenAI",
+      "Google Vertex AI"
+
+    ],
+    "required_output_keys": [
+      "alignment_summary",
+      "matching_skills",
+      "missing_skills",
+      "missing_skills_explanation",
+      "bullet_improvements",
+      "impact_suggestions",
+      "evidence_used"
+    ]
+  }
+]

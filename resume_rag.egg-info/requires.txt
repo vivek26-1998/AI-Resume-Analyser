@@ -1,0 +1,12 @@
+streamlit
+sentence-transformers
+faiss-cpu
+PyMuPDF
+openai
+numpy
+torch
+python-dotenv
+
+[dev]
+pytest
+ruff

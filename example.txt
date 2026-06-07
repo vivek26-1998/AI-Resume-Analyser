@@ -1,0 +1,215 @@
+We are looking for an AI/ML Engineer with experience building practical AI applications using large language models, RAG pipelines, vision-language models, agent-based workflows, semantic search, and NLP-based systems. The role involves working with Python, embeddings, vector databases, prompt engineering, model evaluation, REST APIs, document parsing, PDF processing, OCR, backend services, and production-oriented deployment to create reliable and efficient AI systems for tasks such as document understanding, resume-job matching, enterprise search, intelligent assistants, workflow automation, failure analysis, knowledge retrieval, and decision-support applications. The ideal candidate should have hands-on experience with tools and technologies such as FastAPI, Flask, Docker, Kubernetes, Git, GitHub Actions, PostgreSQL, MongoDB, Redis, FAISS, ChromaDB, Pinecone, LangChain, LlamaIndex, LangGraph, Hugging Face Transformers, OpenAI APIs, AWS services such as S3, Lambda, EC2, ECS, EKS, and cloud-native deployment workflows. Experience with multimodal AI, vision-language models, model quantization, model fine-tuning, LLM-as-judge evaluation, structured JSON outputs, Pydantic validation, CI/CD pipelines, and scalable API-driven ML systems is highly desirable. Additional experience with Azure OpenAI, Google Vertex AI, AWS Bedrock, Terraform, MLflow, Airflow, monitoring and observability tools, model registry systems, production MLOps, distributed data pipelines, and enterprise-grade security practices is a plus.
+  {
+  "alignment_summary": "The candidate's resume aligns well with the job description, showcasing relevant experience in AI/ML engineering, particularly with large language models, vision-language models, and backend development using FastAPI. However, there are notable gaps in experience with certain cloud services and deployment practices.",
+  "matching_skills": [
+    "Python",
+    "FastAPI",
+    "REST APIs",
+    "LLMs",
+    "Vision-Language Models",
+    "RAG",
+    "Prompt Engineering",
+    "OpenAI API",
+    "Hugging Face Transformers",
+    "Docker",
+    "Kubernetes",
+    "AWS (S3, Lambda)",
+    "CI/CD"
+  ],
+  "missing_skills": [
+    "Vector databases",
+    "MongoDB",
+    "Redis",
+    "ChromaDB",
+    "Pinecone",
+    "LangChain",
+    "LlamaIndex",
+    "Azure OpenAI",
+    "Google Vertex AI",
+    "AWS Bedrock",
+    "Terraform",
+    "MLflow",
+    "Airflow",
+    "Monitoring and observability tools",
+    "Model registry systems",
+    "Production MLOps",
+    "Distributed data pipelines",
+    "Enterprise-grade security practices"
+  ],
+  "missing_skills_explanation": "The candidate lacks experience with several advanced tools and platforms mentioned in the job description, particularly in vector databases and cloud-native deployment workflows, which are critical for building scalable AI systems.",
+  "bullet_improvements": [
+    "Clarify the specific contributions to the development of the FastAPI and Gradio-based demo service, including any metrics or outcomes achieved.",
+    "Detail the impact of the automated robotic data acquisition and processing workflows on project efficiency or accuracy."
+  ],
+  "impact_suggestions": [
+    "Highlight any specific achievements or metrics related to the AI inference and evaluation pipeline to demonstrate effectiveness.",
+    "Emphasize collaborative projects or cross-functional teamwork to showcase communication skills and adaptability."
+  ],
+  "evidence_used": [
+    "Chunk 0: 'Built a Python-based modular AI inference and evaluation pipeline using Vision-Language Models and LLM APIs'",
+    "Chunk 1: 'Developed a FastAPI and Gradio-based demo service for multimodal model inference'",
+    "Chunk 3: 'Experience with LLMs, RAG, and Vision-Language Models and agent workflows'",
+    "Chunk 7: 'AWS (S3, Lambda, IVS), Docker, Kubernetes, Helm, CI/CD concepts'"
+  ]
+}
+
+
+# evaluation/evaluator.py
+
+
+def list_to_text(items):
+    """
+    Convert a list of strings into one lowercase text block.
+    """
+    if not items:
+        return ""
+
+    return " ".join(items).lower()
+
+
+def validate_output_structure(output_json, test_case):
+    """
+    Check whether the LLM output has all required keys.
+    """
+    required_keys = test_case.get("required_output_keys", [])
+
+    missing_keys = []
+
+    for key in required_keys:
+        if key not in output_json:
+            missing_keys.append(key)
+
+    structure_valid = len(missing_keys) == 0
+
+    return {
+        "structure_valid": structure_valid,
+        "missing_keys": missing_keys,
+    }
+
+
+def evaluate_retrieved_context(retrieved_chunks, test_case):
+    """
+    Check whether retrieved chunks contain expected matching skills.
+    """
+    expected_skills = test_case.get("expected_matching_skills", [])
+
+    retrieved_text = ""
+
+    for chunk in retrieved_chunks:
+        retrieved_text += chunk.get("text", "") + " "
+
+    retrieved_text = retrieved_text.lower()
+
+    found_skills = []
+    missed_skills = []
+
+    for skill in expected_skills:
+        if skill.lower() in retrieved_text:
+            found_skills.append(skill)
+        else:
+            missed_skills.append(skill)
+
+    total = len(expected_skills)
+    score = len(found_skills) / total if total > 0 else 0
+
+    return {
+        "retrieval_score": round(score, 3),
+        "found_skills_in_retrieved_chunks": found_skills,
+        "missed_skills_in_retrieved_chunks": missed_skills,
+    }
+
+
+def evaluate_matching_skills(output_json, test_case):
+    """
+    Check whether model output contains expected matching skills.
+    """
+    expected_skills = test_case.get("expected_matching_skills", [])
+    actual_matching_skills = output_json.get("matching_skills", [])
+
+    actual_text = list_to_text(actual_matching_skills)
+
+    found_skills = []
+    missed_skills = []
+
+    for skill in expected_skills:
+        if skill.lower() in actual_text:
+            found_skills.append(skill)
+        else:
+            missed_skills.append(skill)
+
+    total = len(expected_skills)
+    score = len(found_skills) / total if total > 0 else 0
+
+    return {
+        "matching_skill_score": round(score, 3),
+        "found_matching_skills": found_skills,
+        "missed_matching_skills": missed_skills,
+    }
+
+
+def evaluate_missing_skills(output_json, test_case):
+    """
+    Check whether model output contains expected missing skills.
+    """
+    expected_missing_skills = test_case.get("expected_missing_skills", [])
+    actual_missing_skills = output_json.get("missing_skills", [])
+
+    actual_text = list_to_text(actual_missing_skills)
+
+    found_skills = []
+    missed_skills = []
+
+    for skill in expected_missing_skills:
+        if skill.lower() in actual_text:
+            found_skills.append(skill)
+        else:
+            missed_skills.append(skill)
+
+    total = len(expected_missing_skills)
+    score = len(found_skills) / total if total > 0 else 0
+
+    return {
+        "missing_skill_score": round(score, 3),
+        "found_missing_skills": found_skills,
+        "missed_missing_skills": missed_skills,
+    }
+
+
+def check_false_claims(output_json, test_case):
+    """
+    Check whether model claims skills that should not be claimed as experience.
+    Only checks matching_skills, not missing_skills.
+    """
+    must_not_claim = test_case.get("must_not_claim_as_experience", [])
+    actual_matching_skills = output_json.get("matching_skills", [])
+
+    actual_text = list_to_text(actual_matching_skills)
+
+    false_claims = []
+
+    for skill in must_not_claim:
+        if skill.lower() in actual_text:
+            false_claims.append(skill)
+
+    return {
+        "false_claims_detected": len(false_claims) > 0,
+        "false_claims": false_claims,
+    }
+
+
+def run_all_evaluations(output_json, retrieved_chunks, test_case):
+    """
+    Run all evaluator checks.
+    """
+    return {
+        "case_id": test_case.get("case_id", "unknown_case"),
+        "structure": validate_output_structure(output_json, test_case),
+        "retrieval": evaluate_retrieved_context(retrieved_chunks, test_case),
+        "matching_skills": evaluate_matching_skills(output_json, test_case),
+        "missing_skills": evaluate_missing_skills(output_json, test_case),
+        "false_claims": check_false_claims(output_json, test_case),
+    }
+
+pip install -e ".[dev]"
+for eval
+python -m evaluation.run_eval

@@ -1,15 +1,15 @@
 import streamlit as st
 from openai import OpenAI
-
-from rag_utils import create_vector_store, retrieve
-from pdfloader import extract_text_from_pdf
-from llm_analyzer import analyze_resume_match
+import json
+from resume_rag.rag_utils import create_vector_store, retrieve
+from resume_rag.pdfloader import extract_text_from_pdf
+from resume_rag.llm_analyzer import analyze_resume_match
 import traceback
 
 
-CHUNK_SIZE = 800
-OVERLAP = 100
-TOP_K = 3
+CHUNK_SIZE = 1000
+OVERLAP = 150
+TOP_K = 5
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.3
 
@@ -52,12 +52,21 @@ if uploaded_file and job_description:
                 model=LLM_MODEL,
                 temperature=TEMPERATURE,
             )
-            print(f"LLM Output {output_json}")
+        json_output = json.dumps(output_json, indent=2)
+        print("LLM output :", json_output)
 
         st.subheader("AI Analysis")
 
         st.write("**Alignment Summary:**")
         st.write(output_json.get("alignment_summary", "Not provided"))
+
+        st.write("**Matching Skills:**")
+        for skills in output_json.get("matching_skills", []):
+            st.write(f"- {skills}")
+
+        st.write("**Missing Skills:**")
+        for skills in output_json.get("missing_skills", []):
+            st.write(f"- {skills}")
 
         st.write("**Missing Skills Explanation:**")
         st.write(output_json.get("missing_skills_explanation", "Not provided"))
@@ -80,7 +89,7 @@ if uploaded_file and job_description:
                 st.write(f"Distance: {chunk['distance']:.4f}")
                 st.write(chunk["chunk_text"])
 
-    except Exception as e:# for detailed error reporting
+    except Exception as e:  # for detailed error reporting
         st.error("Error processing output.")
         st.write(f"Exception type: {type(e).__name__}")
         st.write(f"Exception message: {e}")
